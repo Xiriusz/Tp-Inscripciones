@@ -22,13 +22,16 @@ struct Inscrip{
     int CodM;
 };
 
-struct PromAntiguedad{
+struct MateriaAlumno{
     int CodM;
-    int Antiguedad;
-    char NombreM[30];
-    char NombreA[30];
-    int Capacidad;
     int Legajo;
+    int Antiguedad;
+};
+
+struct MateriaAntiguedadAcumulada {
+    int CodM;
+    int CantAlum;
+    int AntiguedadAcumulada;
 };
 
 struct Nodo {
@@ -43,6 +46,8 @@ void genMaterias();
 void lecMaterias();// Hacerlo lindo
 void genInscrip();
 void lecInscrip();// Hacerlo lindo
+vector<MateriaAntiguedadAcumulada> antiguedadAcumulada(vector<MateriaAlumno>);
+void antiguedadPromedio(vector<MateriaAlumno>);
 
 int main() {
     int resp = -1;
@@ -88,7 +93,7 @@ int main() {
 
 // Generacion de Archivos y Lectura
 void genAlumnos(){
-    Alumnos aPersona;
+    Alumnos aPersona = {};
     FILE *Alumnos;
     Alumnos= fopen("Alumnos.dat","wb");
         cout << "Ingrese legajo ( 0 para detener la grabacion de datos) \n";
@@ -245,12 +250,35 @@ int matSinInscrip( vector<Inscrip> inscripciones, vector<Materias> materias) {
     return materiasSinInscriptos;
 }
 
-float promAntig( vector<Inscrip> inscripciones, vector<PromAntiguedad> antiguedad) {
-    float prom;
-    for (int i = 0; i < inscripciones.size(); i++) {
-        inscripciones[i].CodM = antiguedad[i].CodM;
-        inscripciones[i].Legajo;
+vector<MateriaAntiguedadAcumulada> antiguedadAcumulada(vector<MateriaAlumno> materiaAlumno) {
+    bool materiaEncontrada;
+    vector<MateriaAntiguedadAcumulada> antiguedadAcumulada;
+    for (int i = 0; i < materiaAlumno.size(); i++) {
+        materiaEncontrada = false;
+        for (int j = 0; j < antiguedadAcumulada.size(); j++) {
+            if (materiaAlumno[i].CodM == antiguedadAcumulada[j].CodM) {
+                materiaEncontrada = true;
+                antiguedadAcumulada[j].CantAlum += 1;
+                antiguedadAcumulada[j].AntiguedadAcumulada += materiaAlumno[i].Antiguedad;
+                break;
+            }
+        }
 
+        if (!materiaEncontrada) {
+            MateriaAntiguedadAcumulada aux = {materiaAlumno[i].CodM, 1, materiaAlumno[i].Antiguedad};
+            antiguedadAcumulada.push_back(aux);
+        }
+    }
+
+    return antiguedadAcumulada;
+}
+
+void antiguedadPromedio(vector<MateriaAlumno> materiaAlumno) {
+    vector<MateriaAntiguedadAcumulada> antiguedad = antiguedadAcumulada(materiaAlumno);
+    cout << "Materia" << " " << "AntiguedadPromedio" << " " <<"\n";
+    for (int i = 0; i < antiguedad.size(); i++) {
+        float promedio = antiguedad[i].AntiguedadAcumulada / antiguedad[i].CantAlum;
+        cout << antiguedad[i].CodM << "     " << promedio << "     " << "\n";
     }
 }
 
