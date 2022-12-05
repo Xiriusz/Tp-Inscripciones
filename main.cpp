@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <conio.h>
+//#include <conio.h>
+
 using namespace std;
 
 struct Alumnos{
@@ -9,15 +10,18 @@ struct Alumnos{
     char NomyAp[30];
     int Antiguedad;
 };
+
 struct Materias{
     int CodM;
     char Nombre[30];
     int Capacidad;
 };
+
 struct Inscrip{
     int Legajo;
     int CodM;
 };
+
 struct PromAntiguedad{
     int CodM;
     int Antiguedad;
@@ -26,6 +30,7 @@ struct PromAntiguedad{
     int Capacidad;
     int Legajo;
 };
+
 struct Nodo {
     Nodo *sig;
     Alumnos NodoAlum;
@@ -102,6 +107,7 @@ void genAlumnos(){
         cout << "Datos ingresados correctamente" << endl;
 
 }
+
 void lecAlumnos(){
     Alumnos aPersona;
     FILE *Alumnos;
@@ -119,6 +125,7 @@ void lecAlumnos(){
     fclose(Alumnos);
     cout << "Lectura completada" << endl;
 }
+
 void genMaterias(){
     Materias aMateria;
     FILE *Materias;
@@ -137,6 +144,7 @@ void genMaterias(){
     fclose(Materias);
     cout << "Datos ingresados correctamente" << endl;
 }
+
 void lecMaterias(){
     Materias aMateria;
     FILE *Materias;
@@ -154,6 +162,7 @@ void lecMaterias(){
     fclose(Materias);
     cout << "Lectura completada" << endl;
 }
+
 void genInscrip(){
     Inscrip aInscrip;
     FILE *Inscripciones;
@@ -171,6 +180,7 @@ void genInscrip(){
     fclose(Inscripciones);
     cout << "Datos ingresados correctamente" << endl;
 }
+
 void lecInscrip(){
     FILE *Inscripciones;
     Inscrip aInscrip;
@@ -188,6 +198,7 @@ void lecInscrip(){
     fclose(Inscripciones);
     cout << "Lectura completada" << endl;
 }
+
 // Busquedas Secuenciales
 bool BuscSecuAlum(int numBusq, vector <Alumnos> alumno) {
     bool band = false;
@@ -199,6 +210,7 @@ bool BuscSecuAlum(int numBusq, vector <Alumnos> alumno) {
     }
     return band;
 }
+
 bool BuscSecuMat(int numBusq, vector <Materias> materia) {
     bool band = false;
     for (int i = 0; i < materia.size(); ++i) {
@@ -209,6 +221,7 @@ bool BuscSecuMat(int numBusq, vector <Materias> materia) {
     }
     return band;
 }
+
 bool busqSecuInsc(int numBusq, vector<Inscrip> inscripciones) {
     bool band = false;
     for (int i = 0; i < inscripciones.size(); ++i) {
@@ -220,6 +233,7 @@ bool busqSecuInsc(int numBusq, vector<Inscrip> inscripciones) {
     return band;
 
 }
+
 // Funciones para Informe
 int matSinInscrip( vector<Inscrip> inscripciones, vector<Materias> materias) {
     int materiasSinInscriptos = 0;
@@ -230,6 +244,7 @@ int matSinInscrip( vector<Inscrip> inscripciones, vector<Materias> materias) {
 
     return materiasSinInscriptos;
 }
+
 float promAntig( vector<Inscrip> inscripciones, vector<PromAntiguedad> antiguedad) {
     float prom;
     for (int i = 0; i < inscripciones.size(); i++) {
@@ -238,6 +253,7 @@ float promAntig( vector<Inscrip> inscripciones, vector<PromAntiguedad> antigueda
 
     }
 }
+
 void ordenLista (Nodo *&Lista, Alumnos RAlu){
         Nodo *pnuevo = new Nodo();
         pnuevo->NodoAlum = RAlu;
