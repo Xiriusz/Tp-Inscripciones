@@ -40,7 +40,7 @@ void genInscrip();
 void lecInscrip();// Hacerlo lindo
 
 int main() {
-    int resp;
+    int resp = -1;
     std::cout << "Hello, World!" << std::endl;
     cout << "Bienvenido, por favor seleccione la accion deseada \n";
     cout << "Opcion 1) Ingresar datos de alumnos\n";
@@ -49,30 +49,36 @@ int main() {
     cout << "Opcion 4) Leer datos de Materias \n";
     cout << "Opcion 5) Ingresar datos de Inscripciones \n";
     cout << "Opcion 6) Leer datos de Inscripciones \n";
+    cout << "Opcion 9) Salir \n";
 
-    cin >> resp;
-    switch (resp) {
-        case 1:
-            genAlumnos();
-            break;
-        case 2:
-            lecAlumnos();
-            break;
-        case 3:
-            genMaterias();
-            break;
-        case 4:
-            lecMaterias();
-            break;
-        case 5:
-            genInscrip();
-            break;
-        case 6:
-            lecInscrip();
-            break;
+    while (resp != 9) {
+        cin >> resp;
+        switch (resp) {
+            case 1:
+                genAlumnos();
+                break;
+            case 2:
+                lecAlumnos();
+                break;
+            case 3:
+                genMaterias();
+                break;
+            case 4:
+                lecMaterias();
+                break;
+            case 5:
+                genInscrip();
+                break;
+            case 6:
+                lecInscrip();
+                break;
+            case 9:
+                break;
+            default:
+                cout << "Ingrese una opcion valida \n";
+                break;
+        }
     }
-
-    return 0;
 }
 
 // Generacion de Archivos y Lectura
