@@ -18,40 +18,55 @@ struct Inscrip{
     int Legajo;
     int CodM;
 };
-struct PromAntiguedad{
+struct MateriaAntiguedadAcumulada {
     int CodM;
-    int Antiguedad;
-    char NombreM[30];
-    char NombreA[30];
-    int Capacidad;
-    int Legajo;
+    int CantAlum;
+    int AntiguedadAcumulada;
 };
 struct Nodo {
     Nodo *sig;
     Alumnos NodoAlum;
 };
-
+struct MateriaAlumno{
+    int CodM;
+    int Legajo;
+    int Antiguedad;
+};
 
 void genAlumnos();
-void lecAlumnos(); // Hacerlo lindo
+void lecAlumnos();
 void genMaterias();
-void lecMaterias();// Hacerlo lindo
+void lecMaterias();
 void genInscrip();
-void lecInscrip();// Hacerlo lindo
+void lecInscrip();
+vector<MateriaAntiguedadAcumulada> antiguedadAcumulada(vector<MateriaAlumno>);
+void antiguedadPromedio(vector<MateriaAlumno>);
+bool BuscSecuAlum(int, vector <Alumnos>);
+bool BuscSecuMat(int, vector <Materias>);
+bool busqSecuInsc(int, vector<Inscrip>);
+int matSinInscrip(vector<Materias>, vector<Inscrip>);
 
 int main() {
     int resp;
     std::cout << "Hello, World!" << std::endl;
     cout << "Bienvenido, por favor seleccione la accion deseada \n";
+    cout << "Opcion 0) Salir\n";
     cout << "Opcion 1) Ingresar datos de alumnos\n";
     cout << "Opcion 2) Leer datos de alumnos \n";
     cout << "Opcion 3) Ingresar datos de Materias \n";
     cout << "Opcion 4) Leer datos de Materias \n";
     cout << "Opcion 5) Ingresar datos de Inscripciones \n";
     cout << "Opcion 6) Leer datos de Inscripciones \n";
+    cout << "Opcion 7) Ejecutar inscripciones" << endl;
+    cout << "Opcion 8) Cantidad de materias sin inscriptos" << endl;
+    cout << "Opcion 9) Promedio antiguedad de inscriptos por materia" << endl;
+    cout << "Opcion 10) Alumnos no inscriptos por exceder capacidad" << endl;
+    cin >> resp;
 
     cin >> resp;
     switch (resp) {
+        case 0:
+            exit(1);
         case 1:
             genAlumnos();
             break;
@@ -70,8 +85,17 @@ int main() {
         case 6:
             lecInscrip();
             break;
-    }
+        case 7:
+            break;
+        case 10:
+            antiguedadPromedio(vector<MateriaAlumno>);
+            break;
+        case 8:
+            matSinInscrip(vector<Materias>,vector<Inscrip>);
+            break;
 
+    }
+    cout<<"Muchas gracias por utilizar el programa"<<endl;
     return 0;
 }
 
@@ -224,29 +248,59 @@ int matSinInscrip( vector<Inscrip> inscripciones, vector<Materias> materias) {
 
     return materiasSinInscriptos;
 }
-float promAntig( vector<Inscrip> inscripciones, vector<PromAntiguedad> antiguedad) {
-    float prom;
-    for (int i = 0; i < inscripciones.size(); i++) {
-        inscripciones[i].CodM = antiguedad[i].CodM;
-        inscripciones[i].Legajo;
+vector<MateriaAntiguedadAcumulada> antiguedadAcumulada(vector<MateriaAlumno> materiaAlumno) {
+    bool materiaEncontrada;
+    vector<MateriaAntiguedadAcumulada> antiguedadAcumulada;
+    for (int i = 0; i < materiaAlumno.size(); i++) {
+        materiaEncontrada = false;
+        for (int j = 0; j < antiguedadAcumulada.size(); j++) {
+            if (materiaAlumno[i].CodM == antiguedadAcumulada[j].CodM) {
+                materiaEncontrada = true;
+                antiguedadAcumulada[j].CantAlum += 1;
+                antiguedadAcumulada[j].AntiguedadAcumulada += materiaAlumno[i].Antiguedad;
+                break;
+            }
+        }
 
+        if (!materiaEncontrada) {
+            MateriaAntiguedadAcumulada aux = {materiaAlumno[i].CodM, 1, materiaAlumno[i].Antiguedad};
+            antiguedadAcumulada.push_back(aux);
+        }
+    }
+
+    return antiguedadAcumulada;
+}
+
+void antiguedadPromedio(vector<MateriaAlumno> materiaAlumno) {
+    vector<MateriaAntiguedadAcumulada> antiguedad = antiguedadAcumulada(materiaAlumno);
+    cout << "Materia" << " " << "AntiguedadPromedio" << " " <<"\n";
+    for (int i = 0; i < antiguedad.size(); i++) {
+        float promedio = antiguedad[i].AntiguedadAcumulada / antiguedad[i].CantAlum;
+        cout << antiguedad[i].CodM << "     " << promedio << "     " << "\n";
     }
 }
 void ordenLista (Nodo *&Lista, Alumnos RAlu){
         Nodo *pnuevo = new Nodo();
         pnuevo->NodoAlum = RAlu;
 
-        Nodo *p2 = Lista;
-        Nodo *p3;
-
-    while ((p2 != NULL) && (p2->NodoAlum.NomyAp < RAlu.NomyAp)){
-        p2 = p3;
-        p2 = p2->sig;
-    }
-    if (Lista == p2){
+    if((Lista == NULL) ||(pnuevo -> NodoAlum.NomyAp, Lista -> NodoAlum.NomyAp))<0){
+        pnuevo-> sig = Lista;
         Lista = pnuevo;
-    } else{
-        p3->sig = pnuevo;
+    }else{
+        Nodo* pant;
+        Nodo* punt = Lista;
+        while ((punt != NULL) && ((pnuevo -> NodoAlum.NomyAp, punt -> NodoAlum.NomyAp))>0){
+            pant = punt;
+            punt = punt -> sig;
+        }
+        ptrant -> sig = pnuevo;
+        pnuevo -> sig = punt;
     }
-    pnuevo->sig = p2;
+}
+void  informe3(Nodo* Lista){
+    cout << "Nombre " << " Legajo" << endl;
+    while(Lista != NULL){
+        cout << "  " <<Lista->NodoAlum.NomyAp <<"      " << Lista->NodoAlum.Legajo << endl;
+        Lista = Lista -> sig;
+    }
 }
