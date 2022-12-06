@@ -1,0 +1,384 @@
+#include<iostream>
+#include <stdio.h>
+#include <string.h>
+using namespace std;
+
+// Código cáscara del TP
+
+struct tAlu {       
+   int Leg;
+   char NyA[30]; 
+   int Ant;
+};
+
+struct tMat {       
+   int CodM;
+   char Nom[30];
+   int Cap;
+};
+
+
+struct tIns {       
+   int CodM;
+   int Leg;
+};
+
+
+struct Nodo {   
+   tAlu AlumNod;
+   Nodo* sig;
+};
+
+struct tMatMem{
+        int CodM;
+        char Nom[20];
+       // si quiere puede modificar los nombres de los campos y/o sacar-agregar otros
+        int Capi;  // capacidad inicial de la materia
+        int Capf;  // capacidad actualizada y final de la materia
+        int Rech;  // rechazos
+        int Sedad; // suma de antiguedades 
+};
+
+// Código cáscara del TP
+//----------------------------------generacion archivos----------------------------------------//
+
+void  generar_ALUMNOS(){
+    tAlu Ralu;
+    FILE *ALUMNOS;
+    ALUMNOS=fopen("ALUMNOS.dat","wb");
+    cout<<"Ingresar legajo alumno corta con legajo = 0" <<endl;
+    cin>>Ralu.Leg;
+    while(Ralu.Leg!=0){
+        cout<<"Ingrese Nombre" <<endl;
+        cin>>Ralu.NyA;
+        cout<<"Ingrese antiguedad" <<endl;
+        cin>>Ralu.Ant;
+        fwrite(&Ralu,sizeof(Ralu),1,ALUMNOS);
+        cout<<"Ingresar legajo alumno corta con legajo = 0" <<endl;
+        cin>>Ralu.Leg;
+    }
+    fclose(ALUMNOS);
+    
+}
+
+void leer_ALUMNOS(){
+    tAlu Ralu;
+    FILE *ALUMNOS;
+    ALUMNOS=fopen("ALUMNOS.dat","rb");
+    if (ALUMNOS==NULL){
+        cout<<"Archivo inexistente"<<endl;
+    }
+    cout << "Listado de alumnos" << endl;
+	cout << "Legajo " <<" Nombre " << " Antiguedad" << endl;
+	fread(&Ralu,sizeof(Ralu),1,ALUMNOS);
+    while(!feof(ALUMNOS)){
+        cout <<"  " << Ralu.Leg << "      " << Ralu.NyA << "       " << Ralu.Ant << endl;
+        fread(&Ralu,sizeof(Ralu),1,ALUMNOS);
+    }
+    fclose(ALUMNOS);
+}
+
+void generar_MATERIAS(){
+    tMat Rmat;
+    FILE *MATERIAS;
+    MATERIAS=fopen("MATERIAS.dat","wb");
+    cout<<"Ingresar código de materia corta con CodM = 0" <<endl;
+    cin>>Rmat.CodM;
+    while(Rmat.CodM!=0){
+        cout<<"Ingrese nombre materia" <<endl;
+        cin>>Rmat.Nom;
+        cout<<"Ingrese capacidad disponible" <<endl;
+        cin>>Rmat.Cap;
+        fwrite(&Rmat,sizeof(Rmat),1,MATERIAS);
+        cout<<"Ingresar código de materia corta con CodM = 0" <<endl;
+        cin>>Rmat.CodM;
+    }
+    fclose(MATERIAS);
+}
+
+void leer_MATERIAS(){
+    tMat Rmat;
+    FILE *MATERIAS;
+    MATERIAS=fopen("MATERIAS.dat","rb");
+    if (MATERIAS==NULL){
+        cout<<"Archivo inexistente"<<endl;
+    }
+    cout << "Listado de Materias" << endl;
+	cout << "Cód " <<" Nombre " <<"Capacidad" << endl;
+	fread(&Rmat,sizeof(Rmat),1,MATERIAS);
+    while(!feof(MATERIAS)){
+        cout <<" " << Rmat.CodM << "     " << Rmat.Nom << "      " << Rmat.Cap <<endl;
+        fread(&Rmat,sizeof(Rmat),1,MATERIAS);
+    }
+    fclose(MATERIAS);
+}
+
+void generar_INSCRIPCIONES(){
+    tIns Rins;
+    FILE *INSCRIPCIONES;
+    INSCRIPCIONES=fopen("INSCRIPCIONES.dat","wb");
+    cout<<"Ingresar legajo corta con legajo = 0" <<endl;
+    cin>>Rins.Leg;
+    while(Rins.Leg!=0){
+        cout<<"Ingrese codigo de materia" <<endl;
+        cin>>Rins.CodM;
+        fwrite(&Rins,sizeof(Rins),1,INSCRIPCIONES);
+        cout<<"Ingresar legajo corta con legajo = 0" <<endl;
+        cin>>Rins.Leg;
+    }
+    fclose(INSCRIPCIONES);
+}
+
+void leer_INSCRIPCIONES(){
+    tIns Rins;
+    FILE *INSCRIPCIONES;
+    INSCRIPCIONES=fopen("INSCRIPCIONES.dat","rb");
+    if (INSCRIPCIONES==NULL){
+        cout<<"Archivo inexistente"<<endl;
+    }
+    cout << "Listado de Inscripciones" << endl;
+	cout << "Legajo " <<" Cód" << endl;
+	fread(&Rins,sizeof(Rins),1,INSCRIPCIONES);
+    while(!feof(INSCRIPCIONES)){
+        cout <<"  " << Rins.Leg << "      " << Rins.CodM <<endl;
+        fread(&Rins,sizeof(Rins),1,INSCRIPCIONES);
+    }
+    fclose(INSCRIPCIONES);
+}
+
+//----------------------------------fin generacion archivos----------------------------------------//
+
+//----------------------------------Inicio Inscripción de alumnos ---------------------------------//   
+
+//---------------------------------Modulo de generacion de lista----------------------------------//
+
+void insertaOrdenado(Nodo* &Lista,tAlu Ralu){
+        Nodo* pnue = new Nodo();
+        pnue -> AlumNod = Ralu;
+        if((Lista == NULL) ||(strcmp(pnue -> AlumNod.NyA, Lista -> AlumNod.NyA))<0){
+            pnue-> sig = Lista;
+            Lista = pnue;
+        }else{
+            Nodo* ptrant;
+            Nodo* ptr = Lista;
+            while ((ptr != NULL) && (strcmp(pnue -> AlumNod.NyA, ptr -> AlumNod.NyA))>0){
+                ptrant = ptr;
+                ptr = ptr -> sig;
+            }
+            ptrant -> sig = pnue;
+            pnue -> sig = ptr;
+        }
+}
+
+//---------------------------------Modulos de busquedas--------------------------------------------//
+
+int  BuscaAluenVec (tAlu Valu[], int Leg, int n1){
+   int tope = n1-1;
+   int posAlu=0;
+   while((posAlu<= tope) && Leg != Valu[posAlu].Leg) {
+      posAlu++;
+   }
+   if (posAlu > tope) {      
+     posAlu=-1;    
+   } 
+   return posAlu;
+}
+
+
+int  BuscaMatenVec (tMatMem Vmat[], int CodM, int n2){
+   int tope = n2-1;
+   int posMat=0;
+   while((posMat<= tope) && CodM != Vmat[posMat].CodM) {
+      posMat++;
+   }
+   if (posMat > tope) {      
+     posMat=-1;    
+   } 
+   return posMat;
+}
+
+//---------------------------------Modulos de carga a vector----------------------------------------//
+
+void CargaMatenVec(tMatMem Vmat[], int &n2){
+    n2 = 0;
+    tMat Rmat;
+    FILE *MATERIAS;
+    MATERIAS=fopen("MATERIAS.dat","rb");
+    if (MATERIAS==NULL){
+        cout<<"Archivo inexistente"<<endl;
+    }
+    fread(&Rmat,sizeof(Rmat),1,MATERIAS); 
+    while(!feof(MATERIAS)){
+        Vmat[n2].CodM=Rmat.CodM;
+        strcpy(Vmat[n2].Nom,Rmat.Nom);
+        Vmat[n2].Capi=Rmat.Cap;
+        Vmat[n2].Capf = Vmat[n2].Capi;
+        Vmat[n2].Rech = 0;
+        Vmat[n2].Sedad = 0;
+        n2++;
+        fread(&Rmat,sizeof(Rmat),1,MATERIAS); 
+    }    
+    fclose(MATERIAS);
+}
+
+void CargaAluenVec(tAlu Valu[], int &n1){
+    n1 = 0;
+    FILE *ALUMNOS;
+    ALUMNOS=fopen("ALUMNOS.dat","rb");
+    if (ALUMNOS==NULL){
+        cout<<"Archivo inexistente"<<endl;
+    }
+    while(fread(&Valu[n1], sizeof (Valu[n1]), 1, ALUMNOS)){
+        n1++;
+    } 
+    fclose(ALUMNOS);
+}
+
+//---------------------------------Modulo de ejecucion---------------------------------------------//
+
+void ejecutar(Nodo* &Lista, tMatMem Vmat[], tAlu Valu[], int &n1, int &n2){
+    tIns Rins;
+    int Capf, posMat,posAlu;
+    
+    CargaAluenVec(Valu, n1); 
+    CargaMatenVec(Vmat, n2);
+    
+    
+    FILE *INSCRIPCIONES;
+    INSCRIPCIONES=fopen("INSCRIPCIONES.dat","rb");
+    
+    fread(&Rins,sizeof(Rins),1,INSCRIPCIONES);
+    while(!feof(INSCRIPCIONES)){
+
+        // SEGUIR APROVECHANDO LOS MÓDULOS DADOS O LOS QUE QUIERA AGREGAR
+
+       fread(&Rins,sizeof(Rins),1,INSCRIPCIONES);
+    }
+    fclose(INSCRIPCIONES);
+}
+
+
+//--------------------------------------Fin Inscripción de alumnos --------------------------------------//  
+
+
+//----------------informe 1------------------
+
+void informe1(tMatMem Vmat[],int n2){
+    int matsina=0;
+    for(int i=0;i<=n2-1;i++){
+        if(Vmat[i].Capi==Vmat[i].Capf){
+            matsina++;
+        }
+    }
+    cout << "Cantidad materias sin alumnos: " << matsina << endl;    
+}
+
+//----------------informe 2------------------
+
+void informe2(tMatMem Vmat[],int n2){
+    float promedio;
+    cout << "Materia " << " Promedio" << endl;
+    for(int i=0;i<=n2-1;i++){
+        if(Vmat[i].Capi!=Vmat[i].Capf){
+            promedio=float(Vmat[i].Sedad)/(Vmat[i].Capi-Vmat[i].Capf);
+            cout << "  " << Vmat[i].Nom << "        " << promedio << endl;
+        }
+    }
+}
+
+//----------------informe 3------------------
+
+void  informe3(Nodo* lista){
+    cout << "Nombre " << " Legajo" << endl;
+    while(lista != NULL){
+        cout << "  " <<lista->AlumNod.NyA <<"      " << lista->AlumNod.Leg << endl;
+        lista = lista -> sig;
+    }   
+}
+    
+//----------------------------------------fin informes-----------------------------------------------//
+// Código cáscara del TP
+
+int main(){
+    Nodo* Lista = NULL;
+    tMatMem Vmat[40];
+    tAlu Valu[999];
+    int op, n1, n2;
+    cout << "Elegir opción deseada" << endl;
+    cout << "1-Generar Archivo ALUMNOS" << endl;
+    cout << "2-Leer Archivo ALUMNOS" << endl;
+    cout << "3-Generar Archivo MATERIAS" << endl;
+    cout << "4 -Leer Archivo MATERIAS" << endl;
+    cout << "5-Generar Archivo INSCRIPCIONES" << endl;
+    cout << "6-Leer Archivo INSCRIPCIONES" << endl;
+    cout << "7-Ejecutar inscripciones" << endl;
+    cout << "8-Cantidad de materias sin inscriptos" << endl;
+    cout << "9-Promedio antiguedad de inscriptos por materia" << endl;
+    cout << "10-Alumnos no inscriptos por exceder capacidad" << endl;
+    cout << "11-Salir" << endl;
+    cin >> op;
+    while(op!=11){
+    switch(op){
+        case 1: 
+        generar_ALUMNOS();
+        break;
+        
+        case 2: 
+        leer_ALUMNOS();
+        break;
+        
+        case 3: 
+        generar_MATERIAS();
+        break;
+        
+        case 4: 
+        leer_MATERIAS();
+        break;
+        
+        case 5: 
+        generar_INSCRIPCIONES();
+        break;
+        
+        case 6: 
+        leer_INSCRIPCIONES();
+        break;
+        
+        case 7: 
+        ejecutar(Lista, Vmat, Valu, n1, n2);
+        break;
+        
+        case 8: 
+        informe1(Vmat, n2);
+        break;
+        
+        case 9: 
+        informe2(Vmat, n2);
+        break;
+        
+        case 10: 
+        informe3(Lista);
+        break;
+        
+        default: 
+        cout <<"ERROR! La opcion seleccionada es invalida"<<endl;
+        break;
+    }
+   cout << "Elegir opción deseada" << endl;
+    cout << "1-Generar Archivo ALUMNOS" << endl;
+    cout << "2-Leer Archivo ALUMNOS" << endl;
+    cout << "3-Generar Archivo MATERIAS" << endl;
+    cout << "4 -Leer Archivo MATERIAS" << endl;
+    cout << "5-Generar Archivo INSCRIPCIONES" << endl;
+    cout << "6-Leer Archivo INSCRIPCIONES" << endl;
+    cout << "7-Ejecutar inscripciones" << endl;
+    cout << "8-Cantidad de materias sin inscriptos" << endl;
+    cout << "9-Promedio antiguedad de inscriptos por materia" << endl;
+    cout << "10-Alumnos no inscriptos por exceder capacidad" << endl;
+    cout << "11-Salir" << endl;
+    cin >> op;
+    }
+    
+    cout<<"Muchas gracias por utilizar el programa"<<endl;
+
+    return 0;
+}
